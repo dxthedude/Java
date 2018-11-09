@@ -1,0 +1,39 @@
+// 1st class
+public class JSONhelperBean {
+
+	public String callControllerData(ReqHdr header, Object body) // the 1st method to be called
+			throws ClientProtocolException, IOException, JSONException {
+		HttpPost requestData = HttpServiceBean.requestData;
+		String dashBoardJson = processJSon(header, body);
+		StringEntity params = new StringEntity(dashBoardJson);
+		requestData.setEntity(params);
+		HttpResponse httpResponse = HttpServiceBean.httpClientObject.execute(requestData);
+		return EntityUtils.toString(httpResponse.getEntity());
+	}
+
+	public String processJSon(ReqHdr reqHdr, Object body) throws JSONException, IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		Request<Object> request = new Request<>();
+		request.setReqHdr(reqHdr);
+		request.setReqBody(body);
+		mapper = new ObjectMapper();
+		String str = null;
+		try {
+			str = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(request);
+			return str;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+}
+
+// 2nd class
+public class HttpServiceBean {
+
+	static HttpClient httpClientObject = HttpClientBuilder.create().build();
+	static HttpPost requestData = new HttpPost("http://localhost:8080/qcam/api/getQCamData");
+
+}
