@@ -1,0 +1,5 @@
+1 . Download wadl-dist-1.1.6-bin
+2 . extract and go to bin folder in cmd
+3 . copy your wadl file in bin folder
+4 . wadl2java -o C:\Users\Quantafic\Desktop\Folders\CHM  -p com.chm.generated -a -s jaxrs20 -c customization  INDV_1.wadl
+5 . Done
