@@ -1,0 +1,20 @@
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+
+private static ObjectMapper mapper = new ObjectMapper();
+String requestHeader = null;
+List<RequestHeader> list = wsDAO.getWsApiRequestHeaderList(reqHeaderId);
+if (list.size() > 0) {
+			RequestHeader header = list.get(0);
+			
+			if (header != null) {
+				requestHeader = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(header);
+				// System.out.println("RequestHeader :
+				// "+mapper.writerWithDefaultPrettyPrinter().writeValueAsString(header));
+			}
+			
+			System.out.println("\"reqHdr\":" + requestHeader + ",\n");
+			
+			}
