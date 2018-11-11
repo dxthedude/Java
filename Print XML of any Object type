@@ -1,0 +1,12 @@
+private static void printXML(InquiryResponseType responseType){
+		StringWriter sw = new StringWriter();
+		try {
+		    JAXBContext context = JAXBContext.newInstance("com.qfc.bre.bureau.equifax.generated");
+		    Marshaller marshaller = context.createMarshaller();
+		    marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+		    marshaller.marshal(responseType, sw );
+		    System.out.println(sw.toString());
+		} catch (JAXBException e) {
+		    e.printStackTrace();
+		}
+	}
