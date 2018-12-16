@@ -1,0 +1,5 @@
+
+grant all privileges on *.* to 'quantafic_bre'@'%' identified by 'Quantafic@123' with grant option; 
+
+mysql -u quantafic_bre -p Quantafic@123
+
