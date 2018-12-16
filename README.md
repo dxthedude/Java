@@ -1,2 +1,2 @@
-# Java
+# References
 Some useful code snippets
