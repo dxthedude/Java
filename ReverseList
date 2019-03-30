@@ -1,0 +1,9 @@
+private List<FiInputDataDTO> reverseList(List<FiInputDataDTO> fiinputQueue, List<FiInputDataDTO> reversedRecords) {
+
+		ReverseListIterator itr = new ReverseListIterator(fiinputQueue);
+		while (itr.hasNext()) {
+			reversedRecords.add((FiInputDataDTO) itr.next());
+		}
+		
+		return reversedRecords;
+	}
