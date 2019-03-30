@@ -1,0 +1,17 @@
+ if(loginDate!=null && disbursementDateOldLAN!=null) {
+		 
+		
+		 LocalDate logindate = new java.sql.Date(loginDate.getTime()).toLocalDate();
+		 LocalDate disbddate = new java.sql.Date(disbursementDateOldLAN.getTime()).toLocalDate();
+		 System.out.println("Login Date : "+logindate);
+		 System.out.println("Disbursed Date : "+disbddate);
+		 Period age = Period.between(disbddate,logindate);
+		 System.out.println("Age : "+age);
+		 System.out.println("Months : "+age.getMonths()+"  ||  Years : "+age.getYears());
+		 int diffMonth = 0 ;
+		 if(age!=null  && age.getYears()>0) {
+			 diffMonth = age.getMonths() + (age.getYears() * 12);
+		 }else {
+			 diffMonth = age.getMonths();
+		 }
+		  System.out.println("Diff in months :: "+diffMonth);
