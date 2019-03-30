@@ -1,0 +1,11 @@
+Reference Link :
+https://kodejava.org/how-do-i-limit-the-hibernate-query-result/
+
+2nd option:
+------------
+@Query(value = "SELECT * FROM students ORDER BY id DESC LIMIT 1", nativeQuery = true) 
+Object getLastStudentDetails();
+
+
+@Query("SELECT s FROM Students s ORDER BY s.id DESC LIMIT 1", nativeQuery=true)
+Students getLastStudentDetails();
