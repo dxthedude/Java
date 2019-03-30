@@ -1,0 +1,27 @@
+CriteriaBuilder builder = super.getSessionFactory().getCurrentSession().getCriteriaBuilder();
+CriteriaQuery<FiInputDataDTO> criteria = builder.createQuery(FiInputDataDTO.class);
+Root<FiInputDataDTO> leadRoot = criteria.from(FiInputDataDTO.class);
+criteria.where(builder.equal(leadRoot.get("relatedToId"), relatedToId));
+criteria.orderBy(builder.desc(leadRoot.get("id")));
+criteria.select(leadRoot);
+List<FiInputDataDTO> fiinputQueue = super.getSessionFactory().getCurrentSession().createQuery(criteria).getResultList();
+
+
+-----------------------------------------------------------------------------------------------------------------------
+
+If want to set limit then convert CriteriaQuery to Query/TypedQuery like below :
+CriteriaBuilder builder = super.getSessionFactory().getCurrentSession().getCriteriaBuilder();
+CriteriaQuery<FiInputDataDTO> criteria = builder.createQuery(FiInputDataDTO.class);
+Root<FiInputDataDTO> leadRoot = criteria.from(FiInputDataDTO.class);
+criteria.where(builder.equal(leadRoot.get("relatedToId"), relatedToId));
+criteria.orderBy(builder.desc(leadRoot.get("id")));
+criteria.select(leadRoot);
+Query q = super.getSessionFactory().getCurrentSession().createQuery(criteria);
+q.setFirstResult(1);
+List<FiInputDataDTO> list = q.getResultList();
+
+
+
+
+
+
