@@ -1,0 +1,48 @@
+String requestXml = printXML(request);
+		File folderPath = getRootFolder(MasterCacheLite.getServerConfig(QbreConstants.FILE_STORE_PATH));
+		if (folderPath.exists()) {
+			writeFile(requestXml, "REQ_"+inquiryRequest.getuId()+"_"+inquiryRequest.getBureauInqReqId()+".xml", folderPath);
+		}
+    
+    ==============================================  ||||| ============================================
+    
+    public File getRootFolder(String rootFolderPath) {
+		Calendar calendar = Calendar.getInstance();
+		String year=String.valueOf(calendar.get(Calendar.YEAR));
+		String month=calendar.getDisplayName(Calendar.MONTH, Calendar.LONG,Locale.getDefault());
+		String dayWithDate=calendar.get(Calendar.DATE)+"-"+calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.getDefault());
+		
+		File yearFolder=new File(rootFolderPath+File.separator+QbreConstants.CHM_FILES_PATH+File.separator+year);
+		if(!yearFolder.isDirectory()) {
+			yearFolder.mkdirs();
+		}
+		
+		File monthFolder=new File(yearFolder+File.separator+month);
+		if(!monthFolder.isDirectory()) {
+			monthFolder.mkdirs();
+		}
+		File dayWithDateFolder=new File(monthFolder+File.separator+dayWithDate);
+		if(!dayWithDateFolder.isDirectory()) {
+			dayWithDateFolder.mkdirs();
+		}
+		return dayWithDateFolder;
+	}
+  
+   ==============================================  ||||| ============================================
+   
+   private void writeFile(String fileContent, String fileName, File dayWithDateFolder) {
+		String pathWithName = dayWithDateFolder.getAbsolutePath() + File.separator + fileName;
+		Path path = Paths.get(pathWithName);
+		 
+		//Use try-with-resource to get auto-closeable writer instance
+		try (BufferedWriter writer = Files.newBufferedWriter(path))
+		{
+		    writer.write(fileContent);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+  
+  
+  ==============================================  ||||| ============================================
