@@ -46,3 +46,19 @@ String requestXml = printXML(request);
   
   
   ==============================================  ||||| ============================================
+
+private static String printXML(REQUESTREQUESTFILE request) {
+		StringWriter sw = new StringWriter();
+		try {
+			JAXBContext context = JAXBContext.newInstance("com.qfc.bre.bureau.chm.request.generated");
+			Marshaller marshaller = context.createMarshaller();
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			marshaller.marshal(request, sw);
+			 //System.out.println(sw.toString());
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
+		return sw.toString();
+	}
+	
+	 ==============================================  ||||| ============================================
