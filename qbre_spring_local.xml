@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:cache="http://www.springframework.org/schema/cache" xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/task      
+    http://www.springframework.org/schema/task/spring-task.xsd">
+ 
+	<context:component-scan base-package="com.qfc" />
+	<context:annotation-config />
+	<context:spring-configured />
+
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="packagesToScan" value="com.qfc.bre.admin.dto,com.qfc.bre.master.dto,com.qfc.bre.bureau.request.dto,com.qfc.bre.bureau.cibil.response.dto,com.qfc.bre.bureau.cibil.error.dto,com.qfc.bre.bureau.calc.dto,com.qfc.bre.intg.ws.dto,com.qfc.bre.intg.ws.request.dto.api,com.qfc.qbre.common.dto,com.qfc.bre.intg.ws.response.dto.api,com.qfc.bre.intg.crmnext.dto,com.qfc.bre.idauth.dto,com.qfc.bre.dedupe.dto" />
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
+				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.format_sql">false</prop>
+				<prop key="hibernate.use_sql_comments">false</prop>
+
+				<prop key="hibernate.auto_close_sesions">true</prop>
+				<prop key="hibernate.ejb.event.post-insert">
+					org.hibernate.ejb.event.EJB3PostInsertEventListener,org.hibernate.envers.event.AuditEventListener
+				</prop>
+				<prop key="hibernate.ejb.event.post-update">
+					org.hibernate.ejb.event.EJB3PostUpdateEventListener,org.hibernate.envers.event.AuditEventListener
+				</prop>
+				<prop key="hibernate.ejb.event.post-delete">
+					org.hibernate.ejb.event.EJB3PostDeleteEventListener,org.hibernate.envers.event.AuditEventListener
+				</prop>
+				<prop key="hibernate.ejb.event.pre-collection-update">
+					org.hibernate.envers.event.AuditEventListener
+				</prop>
+				<prop key="hibernate.ejb.event.pre-collection-remove">
+					org.hibernate.envers.event.AuditEventListener
+				</prop>
+				<prop key="hibernate.ejb.event.post-collection-recreate">
+					org.hibernate.envers.event.AuditEventListener
+				</prop>
+				<prop key="org.hibernate.envers.versionsTableSuffix">_aud</prop>
+				<prop key="org.hibernate.envers.revisionFieldName">ver_rev</prop>
+			</props>
+		</property>
+	</bean>
+	<!-- MySQL -->
+	<!-- <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource"> -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass" value="com.mysql.cj.jdbc.Driver" />
+		<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/multibureau_idauth?useSSL=false" />
+		<property name="user" value="root" />
+		<property name="password" value="password" />
+
+		<property name="minPoolSize" value="3" />
+		<property name="maxPoolSize" value="100" />
+		<property name="numHelperThreads" value="10" />
+		<property name="maxStatements" value="50" />
+		<property name="maxIdleTime" value="300" />
+		<property name="acquireIncrement" value="10" />
+		<property name="unreturnedConnectionTimeout" value="60" />
+		<property name="maxConnectionAge" value="90" />
+		<property name="idleConnectionTestPeriod" value="1000" />
+	</bean>
+
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	<bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+	<!-- crmnext db for bureau enquiries -->
+	<bean id="sessionFactoryCRMNext" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSourceCRMNext" />
+ 		<property name="packagesToScan" value="com.qfc.mc.entity.crmnext" />
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
+				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.hbm2ddl.auto">validate</prop>
+				<prop key="hibernate.format_sql">false</prop>
+				<prop key="hibernate.use_sql_comments">false</prop>
+
+			</props>
+		</property>
+	</bean>
+	<!-- MySQL -->
+	<!-- <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource"> -->
+	<bean id="dataSourceCRMNext" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass" value="com.mysql.cj.jdbc.Driver" />
+		<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/qmc_crmnext?useSSL=false" />
+		<property name="user" value="root" />
+		<property name="password" value="password" />
+
+  	
+	</bean>
+
+	<tx:annotation-driven transaction-manager="transactionManagerCRMNext" />
+	<bean id="transactionManagerCRMNext" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactoryCRMNext" />
+	</bean> 
+	
+	
+	
+	
+	<!-- Equifax 30 Local Config -->
+	<bean id="sessionFactoryEqx" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSourceEqx" />
+		<property name="packagesToScan" value="com.qfc.bre.bureau.equifax.generated.xjc" />
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
+				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.format_sql">false</prop>
+				<prop key="hibernate.use_sql_comments">false</prop>
+
+			
+				<prop key="hibernate.auto_close_sesions">true</prop>
+			</props>
+		</property>
+	</bean>
+	<!-- MySQL -->
+	<!-- <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource"> -->
+	<bean id="dataSourceEqx" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass" value="com.mysql.cj.jdbc.Driver" />
+		<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/qbre_equifax_local?useSSL=false" />
+		<property name="user" value="root" />
+		<property name="password" value="password" />
+
+		<property name="minPoolSize" value="3" />
+		<property name="maxPoolSize" value="100" />
+		<property name="numHelperThreads" value="10" />
+		<property name="maxStatements" value="50" />
+		<property name="maxIdleTime" value="300" />
+		<property name="acquireIncrement" value="10" />
+		<property name="unreturnedConnectionTimeout" value="60" />
+		<property name="maxConnectionAge" value="90" />
+		<property name="idleConnectionTestPeriod" value="1000" />
+	</bean>
+
+	<tx:annotation-driven transaction-manager="transactionManagerEqx" />
+	<bean id="transactionManagerEqx" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactoryEqx" />
+	</bean>
+	
+	
+	
+	<!-- CHM 30 Local Config -->
+	<bean id="sessionFactoryChm" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSourceChm" />
+		<property name="packagesToScan" value="com.qfc.bre.bureau.chm.request.generated.xjc,com.qfc.bre.bureau.chm.response.generated.xjc" />
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
+				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.format_sql">false</prop>
+				<prop key="hibernate.use_sql_comments">false</prop>
+
+			
+				<prop key="hibernate.auto_close_sesions">true</prop>
+			</props>
+		</property>
+	</bean>
+	<!-- MySQL -->
+	<!-- <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource"> -->
+	<bean id="dataSourceChm" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass" value="com.mysql.cj.jdbc.Driver" />
+		<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/qbre_chm_local?useSSL=false" />
+		<property name="user" value="root" />
+		<property name="password" value="password" />
+
+		<property name="minPoolSize" value="3" />
+		<property name="maxPoolSize" value="100" />
+		<property name="numHelperThreads" value="10" />
+		<property name="maxStatements" value="50" />
+		<property name="maxIdleTime" value="300" />
+		<property name="acquireIncrement" value="10" />
+		<property name="unreturnedConnectionTimeout" value="60" />
+		<property name="maxConnectionAge" value="90" />
+		<property name="idleConnectionTestPeriod" value="1000" />
+	</bean>
+
+	<tx:annotation-driven transaction-manager="transactionManagerChm" />
+	<bean id="transactionManagerChm" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactoryChm" />
+	</bean>
+	
+	
+	<!-- ekyc DB integrtion -->
+	
+	<bean id="sessionFactoryekyc" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSourceekyc" />
+		<property name="packagesToScan" value="com.qfc.mc.service.entity.admin,com.qfc.mc.service.entity.idv,com.qfc.mc.service.entity.ws,com.qfc.mc.burau.entity.other,com.qfc.mc.service.entity.crmnext" />
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
+				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.format_sql">false</prop>
+				<prop key="hibernate.use_sql_comments">false</prop>
+
+				<prop key="hibernate.auto_close_sesions">true</prop>
+			</props>
+		</property>
+	</bean>
+	<!-- MySQL -->
+	<!-- <bean id="dataSourceekyc" class="org.springframework.jdbc.datasource.DriverManagerDataSource"> -->
+	<bean id="dataSourceekyc" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass" value="com.mysql.cj.jdbc.Driver" />
+		<!-- <property name="jdbcUrl" value="jdbc:mysql://10.44.0.181:3306/qmc_bajaj?useSSL=false" />
+		<property name="user" value="root" />
+		<property name="password" value="qfc@2017" /> -->
+
+		<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/ekyc?useSSL=false" />
+		<property name="user" value="root" />
+		<property name="password" value="password" /> 
+		
+		<property name="minPoolSize" value="5" />
+		<property name="maxPoolSize" value="20" />
+		<property name="numHelperThreads" value="10" />
+		<property name="maxStatements" value="100" />
+		<property name="maxIdleTime" value="300" />
+		<property name="acquireIncrement" value="10" />
+		<property name="unreturnedConnectionTimeout" value="60" />
+		<property name="maxConnectionAge" value="90" />
+		<property name="idleConnectionTestPeriod" value="1000" />
+	</bean>
+
+	<tx:annotation-driven transaction-manager="transactionManagerekyc" />
+	<bean id="transactionManagerekyc" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactoryekyc" />
+	</bean>
+	
+	
+ 
+	<task:annotation-driven/>
+ <!-- <task:scheduled-tasks scheduler="bureauEnquiryScheduler"> 
+ <task:scheduled ref="myAsyncCibilTest" 
+		method="processCibilRecords" fixed-rate="5000" initial-delay="5000" />
+ </task:scheduled-tasks> 
+ <task:scheduler id="bureauEnquiryScheduler" /> -->
+	
+	
+
+	<!-- <task:scheduler id="threeMResponseICASPostScheduler" />   -->
+	
+	
+	<bean id="taskExecutor"
+		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<property name="corePoolSize" value="1" />
+		<property name="maxPoolSize" value="2" />
+		
+		<property name="WaitForTasksToCompleteOnShutdown" value="true" />
+	</bean> 
+	<bean id="taskExecutor1" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<property name="corePoolSize" value="1" />
+		<property name="maxPoolSize" value="2" />
+		<property name="WaitForTasksToCompleteOnShutdown" value="true" />
+	</bean>
+	
+	<bean id="mapper" class="org.dozer.DozerBeanMapper">
+		<property name="mappingFiles">
+			<list>
+				<value>dozer-mapping.xml</value>
+			</list>
+		</property>
+	</bean>
+	<bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
+</beans>

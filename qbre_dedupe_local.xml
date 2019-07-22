@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:cache="http://www.springframework.org/schema/cache" xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/task      
+    http://www.springframework.org/schema/task/spring-task.xsd">
+ 
+	<context:component-scan base-package="com.qfc.bre.dedupe" />
+	<context:annotation-config />
+	<context:spring-configured />
+	
+	<!-- Posidex for Dedupe -->
+	<bean id="sessionFactoryPosdex" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSourcePosdex" />
+		<property name="packagesToScan" value="com.qfc.mc.entity.crmnext" />
+		<property name="hibernateProperties">
+			<props>
+<!--    				<prop key="hibernate.dialect">org.hibernate.dialect.OracleDialect</prop> -->
+   				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
+   				  
+				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.hbm2ddl.auto">validate</prop>
+				<prop key="hibernate.format_sql">false</prop>
+				<prop key="hibernate.use_sql_comments">false</prop>
+				<prop key="hibernate.transaction.auto_close_sessions">true</prop>
+			</props>
+		</property>
+	</bean>
+	<!-- Oracle -->
+	<bean id="dataSourcePosdex" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+  		<property name="driverClass" value="com.mysql.cj.jdbc.Driver" /> 
+		<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/qmc_posidex?useSSL=false" /> 		
+ 		<property name="user" value="root" /> 
+ 		<property name="password" value="password" /> 
+	</bean>
+
+	<tx:annotation-driven transaction-manager="transactionManagerPosdex" />
+	<bean id="transactionManagerPosdex" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactoryPosdex" />
+	</bean>
+	
+
+	<!-- Fin1AF for Dedupe -->
+	 <bean id="sessionFactoryFin1Af" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSourceFin1Af" />
+		<property name="packagesToScan" value="com.qfc.mc.entity.crmnext" />
+		<property name="hibernateProperties">
+			<props>
+<!--    				<prop key="hibernate.dialect">org.hibernate.dialect.OracleDialect</prop> -->
+   				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
+				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.hbm2ddl.auto">validate</prop>
+				<prop key="hibernate.format_sql">false</prop>
+				<prop key="hibernate.use_sql_comments">false</prop>
+				<prop key="hibernate.transaction.auto_close_sessions">true</prop>
+			</props>
+		</property>
+	</bean> 
+	<!-- Oracle -->
+ 	<bean id="dataSourceFin1Af" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+ 		<property name="driverClass" value="com.mysql.cj.jdbc.Driver" /> 
+		<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/qmc_fin1af?useSSL=false" /> 
+		<property name="user" value="root" />
+		<property name="password" value="password" /> 
+	</bean> 
+
+	 <tx:annotation-driven transaction-manager="transactionManagerFin1Af" />
+	<bean id="transactionManagerFin1Af" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactoryFin1Af" />
+	</bean> 
+	
+	<!-- Fin1CF for Dedupe -->
+ 	<bean id="sessionFactoryFin1Cf" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSourceFin1Cf" />
+		<property name="packagesToScan" value="com.qfc.mc.entity.crmnext" />
+		<property name="hibernateProperties">
+			<props>
+<!--    				<prop key="hibernate.dialect">org.hibernate.dialect.OracleDialect</prop> -->
+   				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
+				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.hbm2ddl.auto">validate</prop>
+				<prop key="hibernate.format_sql">false</prop>
+				<prop key="hibernate.use_sql_comments">false</prop>
+				<prop key="hibernate.transaction.auto_close_sessions">true</prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="dataSourceFin1Cf" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass" value="com.mysql.cj.jdbc.Driver" /> 
+		<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/qmc_fin1cf?useSSL=false" /> 
+		<property name="user" value="root" /> 
+		<property name="password" value="password" /> 
+	</bean>
+
+	<tx:annotation-driven transaction-manager="transactionManagerFin1Cf" />
+	<bean id="transactionManagerFin1Cf" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactoryFin1Cf" />
+	</bean>
+	
+		
+
+ 
+	<bean id="taskExecutor"
+		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<property name="corePoolSize" value="20" />
+		<property name="maxPoolSize" value="40" />
+		
+		<property name="WaitForTasksToCompleteOnShutdown" value="true" />
+	</bean> 
+
+	<bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
+</beans>

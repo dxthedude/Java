@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<property name="DEV_HOME" value="/opt/qfc_apps/apache-tomcat-30/logs/" />
+
+	<contextName>qbre</contextName>
+
+	<jmxConfigurator />
+
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%p [%t] %c{1}.%M\(%L\) | %m%n</pattern>
+		</encoder>
+	</appender>
+
+	<!-- This appender to catch all except trace -->
+	<appender name="DEBUG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${DEV_HOME}/qfc_qbre_debug.log</file>
+		<append>true</append>
+<!-- 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${DEV_HOME}/qfc_qbre_debug.log.%d{yyyy-MM-dd}.gz</fileNamePattern>
+		</rollingPolicy> --> 
+		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>${DEV_HOME}/qfc_qbre_debug.log.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
+			<maxFileSize>20MB</maxFileSize>
+		</rollingPolicy>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>WARN</level>
+		</filter>
+		<encoder>
+			<pattern>%d{ISO8601} %-5p [%c{3}] \(%t:%X{}\) %m%n</pattern>
+		</encoder>
+	</appender>
+
+	<!-- This appender to catch only errors -->
+	<appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${DEV_HOME}/qfc_qbre_error.log</file>
+		<append>true</append>
+<!-- 	<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${DEV_HOME}/qfc_qbre_error.log.%d{yyyy-MM-dd}.gz</fileNamePattern>
+		</rollingPolicy>  -->
+		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>${DEV_HOME}/qfc_qbre_error.log.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
+			<maxFileSize>20MB</maxFileSize>
+		</rollingPolicy>
+
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>ERROR</level>
+		</filter>
+		<encoder>
+			<pattern>%d{ISO8601} %-5p [%c{3}] \(%t:%X{}\) %m%n</pattern>
+		</encoder>
+	</appender>
+
+	<root>
+		<level value="${logger.root.level}" />
+		<appender-ref ref="CONSOLE" />
+		<appender-ref ref="DEBUG_FILE" />
+		<appender-ref ref="ERROR_FILE" />
+	</root>
+
+	<!-- Third Parties Logs -->
+	<logger name="org.springframework">
+		<level value="WARN" />
+	</logger>
+	<logger name="org.hibernate">
+		<level value="WARN" />
+	</logger>
+	<logger name="org">
+		<level value="WARN" />
+	</logger>
+	<logger name="com.mchange">
+		<level value="WARN" />
+	</logger>
+	<!-- org.dozer -->
+	<logger name="org.dozer">
+		<level value="WARN" />
+	</logger>
+	<logger name="org.drools.core">
+		<level value="WARN"/>
+	</logger>
+	<logger name="com.qfc">
+		<level value="WARN" />
+	</logger>
+
+</configuration>

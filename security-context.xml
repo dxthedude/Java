@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns:sec="http://www.springframework.org/schema/security" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xsi:schemaLocation="
+     http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/security
+    http://www.springframework.org/schema/security/spring-security.xsd">
+	<sec:global-method-security pre-post-annotations="enabled" />
+
+	<sec:http auto-config="true" use-expressions="true">
+		<sec:csrf disabled="true" />
+		<sec:intercept-url pattern="/dashboard**" access="isAuthenticated()" />
+<!-- 		<sec:intercept-url pattern="/**" access="permitAll" /> -->
+		<sec:intercept-url pattern="/other/**" access="isAuthenticated() and hasRole('ROLE_ADMIN')" />
+		<sec:intercept-url pattern="/mst/**" access="isAuthenticated() and hasRole('ROLE_ADMIN')" />
+		<sec:intercept-url pattern="/bureau/inquiry-form**" access="isAuthenticated() and hasRole('ROLE_ADMIN')" />
+		<sec:intercept-url pattern="/bureau/util/**" access="isAuthenticated() and hasRole('ROLE_ADMIN')" />
+		<sec:intercept-url pattern="/javax.faces.resource/**" access="permitAll" />
+		<sec:form-login login-page="/login.xhtml" authentication-failure-url="/login.xhtml?error=1"
+			default-target-url="/dashboard.xhtml" always-use-default-target="true" />
+		<sec:logout logout-success-url="/login.xhtml" invalidate-session="true" logout-url="/logout"></sec:logout>
+	</sec:http>
+
+	<beans:bean id="userDetailsService" class="com.qfc.bre.admin.service.UserDetailsServiceImpl" />
+	<!-- Set loginService class as the authentication Manager for Spring Security -->
+	<sec:authentication-manager alias="authenticationManager">
+		<sec:authentication-provider user-service-ref="userDetailsService">
+			<sec:password-encoder hash="md5"></sec:password-encoder>
+		</sec:authentication-provider>
+	</sec:authentication-manager>
+
+	<!-- Inject authentication Manager to our LoginBean -->
+	<beans:bean id="loginBean" name="loginBean" class="com.qfc.bre.web.mbean.admin.LoginBean" scope="prototype">
+		<beans:property name="authenticationManager" ref="authenticationManager"></beans:property>
+	</beans:bean>
+</beans:beans>
