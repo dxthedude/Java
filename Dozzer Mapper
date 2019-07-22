@@ -1,0 +1,12 @@
+Dozzer Mapper
+-------------------
+public static DozerBeanMapper MAPPER = new DozerBeanMapper();
+static List<String> myMappingFiles = new ArrayList<String>();
+	
+	
+		static {
+
+		myMappingFiles.add("dozer-mapping.xml");
+		MAPPER.setMappingFiles(myMappingFiles);
+		
+			}	
